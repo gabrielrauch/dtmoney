@@ -1,9 +1,10 @@
+import { FormEvent, useState } from 'react'
+import { api } from '../../services/api'
 import ReactModal from 'react-modal'
 import incomeImg from '../../assets/income.svg'
 import outcomeImg from '../../assets/outcome.svg'
 import closeImg from '../../assets/close.svg'
 import { Container, TransactionTypeContainer, RadioBox } from './styles'
-import { useState } from 'react'
 
 interface NewTransactionModalProps {
   isOpen: boolean
@@ -14,7 +15,22 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
+  const [title, setTitle] = useState('')
+  const [amount, setAmount] = useState(0)
+  const [category, setCategory] = useState('')
   const [type, setType] = useState('deposit')
+
+  function handleCreateNewTransaction(event: FormEvent) {
+    event.preventDefault()
+    const data = {
+      title,
+      amount,
+      category,
+      type,
+    }
+
+    api.post('/transactions', data)
+  }
 
   return (
     <ReactModal
@@ -31,11 +47,21 @@ export function NewTransactionModal({
         <img src={closeImg} alt="Close modal" />
       </button>
 
-      <Container>
+      <Container onSubmit={handleCreateNewTransaction}>
         <h2>Register transaction</h2>
 
-        <input placeholder="Title" />
-        <input type="number" placeholder="Amount" />
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+        />
+
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(event) => setAmount(Number(event.target.value))}
+        />
 
         <TransactionTypeContainer>
           <RadioBox
@@ -58,7 +84,12 @@ export function NewTransactionModal({
           </RadioBox>
         </TransactionTypeContainer>
 
-        <input placeholder="Category" />
+        <input
+          placeholder="Category"
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+        />
+
         <button type="submit">Register</button>
       </Container>
     </ReactModal>
