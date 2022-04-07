@@ -5,7 +5,30 @@ import { App } from './App'
 
 createServer({
   models: {
-    transaction: Model
+    transaction: Model,
+  },
+
+  seeds(server) {
+    server.db.loadData({
+      transactions: [
+        {
+          id: 1,
+          title: 'Website freelance',
+          type: 'deposit',
+          category: 'Development',
+          amount: 6000,
+          createdAt: new Date('2023-04-05 09:00:00'),
+        },
+        {
+          id: 2,
+          title: 'Rent',
+          type: 'withdraw',
+          category: 'Home',
+          amount: 2000,
+          createdAt: new Date('2023-04-06 14:00:00'),
+        },
+      ],
+    })
   },
 
   routes() {
@@ -17,7 +40,7 @@ createServer({
 
     this.post('/transactions', (schema, request) => {
       const data = JSON.parse(request.requestBody)
-      return schema.create('transaction', data);
+      return schema.create('transaction', data)
     })
   },
 })
